@@ -1,5 +1,10 @@
 #ifndef _HELPERS_
 #define _HELPERS_
+#pragma once
+
+#include "data.h"
+#include "interface.h"
+#include "aux.h"
 
 #define BUFLEN 4096
 #define LINELEN 1000

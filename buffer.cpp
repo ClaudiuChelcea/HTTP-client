@@ -1,4 +1,5 @@
-#include "buffer.h"
+#include "HEADERS/buffer.h"
+#include <cstring>
 
 buffer buffer_init(void)
 {

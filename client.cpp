@@ -1,16 +1,9 @@
-#include <iostream>     /* IO */
-#include <stdio.h>      /* printf, sprintf */
-#include <stdlib.h>     /* exit, atoi, malloc, free */
-#include <unistd.h>     /* read, write, close */
-#include <string.h>     /* memcpy, memset */
-#include <sys/socket.h> /* socket, connect */
-#include <netinet/in.h> /* struct sockaddr_in, struct sockaddr */
-#include <netdb.h>      /* struct hostent, gethostbyname */
-#include <arpa/inet.h>
-#include "helpers.h"
-#include "data.h"
-#include "interface.h"
-#include "input_analyzer.h"
+#include <iostream>
+#include "HEADERS/interface.h"
+#include "HEADERS/input_analyzer.h"
+
+#define LINELEN 1000
+#define DEBUG false
 
 int main(void)
 {
@@ -18,6 +11,10 @@ int main(void)
     auto my_printer = UI_printer::getInstance();
     std::string command;
     int exit_status = false;
+    bool userConnected = false;
+    char* cookie = new char[LINELEN];
+    bool jwt_Token_Access = false;
+    char* jwt_Token = new char[LINELEN];
 
     // Display UI
     my_printer.initial_display();
@@ -31,12 +28,17 @@ int main(void)
 
         // Get input
         my_printer.get_input("Insert command: ", command);
-
+        
         // Get command id
         int command_id = get_command_id(command);
 
+        #if DEBUG == true
+            my_printer.put_error_message("Received command: " + command);
+            my_printer.put_error_message("Command id: " + std::to_string(command_id));
+        #endif
+
         // Execute command
-        execute_command(command_id, exit_status);
+        execute_command(command_id, exit_status, userConnected, cookie, jwt_Token_Access, jwt_Token, my_printer);
     }
     
     return 0;

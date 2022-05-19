@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#ifndef BUFFER_H
+#define BUFFER_H
+#pragma once
+#include <iostream>
 
 typedef struct {
     char *data;
@@ -26,3 +26,5 @@ int buffer_find(buffer *buffer, const char *data, size_t data_size);
 // finds data of size data_size in a buffer in a
 // case-insensitive fashion and returns its position
 int buffer_find_insensitive(buffer *buffer, const char *data, size_t data_size);
+
+#endif // BUFFER_H

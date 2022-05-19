@@ -15,9 +15,10 @@ File structure:
     - buffer.cpp && buffer.h (used for helpers, works with buffers)
     - helpers.cpp && helper.h (already implemented functions)
     - data.h (holds the constants and enumerations)
-    - interface.h (for drawing the interface and things on the screen)
+    - interface.h && interface.cpp(for drawing the interface and things on the screen)
     - input_analyzer.cpp && input_analyzer.h (for identifying and calling
     functions)
+    - aux.h && aux.cpp- extra functions
     - Makefile (for compilion the homework; arguments: <> - nothing = make,
     <run> - run the client, <clean> - remove the executable)
     - client.cpp (holds the client implementation, the main loop)

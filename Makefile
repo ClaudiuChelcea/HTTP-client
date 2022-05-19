@@ -6,14 +6,14 @@
 # ******************** COMPILER SETUP ******************** 
 CC = g++
 CFLAGS = -Wall -Wextra -g -std=c++17
-SRC = client.cpp helpers.cpp buffer.cpp input_analyzer.cpp
-HEADERS = helpers.h buffer.h interface.h input_analyzer.h
+SRC = client.cpp helpers.cpp buffer.cpp input_analyzer.cpp aux.cpp interface.cpp
+HEADERS = helpers.h buffer.h interface.h input_analyzer.h aux.h data.h
 NAME = client
 
 # ********************************************************
 # ******************** EXECUTE BUILD *********************
-build: $(SRC) $(HEADERS)
-	$(CC) -o $(NAME) $(CFLAGS) $^
+build:
+	$(CC) -o $(NAME) $(CFLAGS) $^ $(SRC) -I "HEADERS/"
 
 run:
 	./$(NAME)
