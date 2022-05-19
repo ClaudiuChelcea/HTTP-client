@@ -1,0 +1,33 @@
+# Chelcea Claudiu-Marian
+# claudiu.chelcea@stud.acs.upb.ro
+
+Homework assignment:
+Write a C/C++ client that will interact with a REST API.
+The project must be a CLI interface that acts like a UI interface for the
+virtual library.
+
+Preamble:
+In the homework's implementation, I used the files provided at [1.LAB 10 PCOM]
+I did the homework in C++ to use some functions and because I am more familiar
+with C++.
+
+File structure:
+    - buffer.cpp && buffer.h (used for helpers, works with buffers)
+    - helpers.cpp && helper.h (already implemented functions)
+    - data.h (holds the constants and enumerations)
+    - interface.h (for drawing the interface and things on the screen)
+    - input_analyzer.cpp && input_analyzer.h (for identifying and calling
+    functions)
+    - Makefile (for compilion the homework; arguments: <> - nothing = make,
+    <run> - run the client, <clean> - remove the executable)
+    - client.cpp (holds the client implementation, the main loop)
+
+Description:
+
+
+
+
+
+
+Resources:
+[1.LAB 10 PCOM]: https://ocw.cs.pub.ro/courses/pc/laboratoare/10
