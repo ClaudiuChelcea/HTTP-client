@@ -1,4 +1,5 @@
 #include "HEADERS/interface.h"
+#include <string>
 
 // Implement functions for interface
 void UI_printer::put_message_in_bulletlist(std::string message)
@@ -43,6 +44,13 @@ void UI_printer::put_message(std::string message)
 void UI_printer::get_input(std::string message, std::string& out_message) {
     std::cout << "|  " << message;
     std::getline(std::cin, out_message);
+}
+
+void UI_printer::get_input(std::string message, int& id) {
+    std::cout << "|  " << message;
+    std::string out_message;
+    std::getline(std::cin, out_message);
+    sscanf(const_cast<char*>(out_message.c_str()), "%d", &id);
 }
 
 void UI_printer::debug_printer(std::string message) {

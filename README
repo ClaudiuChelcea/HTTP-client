@@ -18,7 +18,7 @@ File structure:
     - interface.h && interface.cpp(for drawing the interface and things on the screen)
     - input_analyzer.cpp && input_analyzer.h (for identifying and calling
     functions)
-    - aux.h && aux.cpp- extra functions
+    - aux.h && aux.cpp - extra functions
     - Makefile (for compilion the homework; arguments: <> - nothing = make,
     <run> - run the client, <clean> - remove the executable)
     - client.cpp (holds the client implementation, the main loop)

@@ -45,6 +45,20 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "cstring": "cpp",
-        "helpers.h": "c"
+        "helpers.h": "c",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "ctime": "cpp",
+        "ios": "cpp",
+        "xfacet": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocinfo": "cpp",
+        "xlocnum": "cpp",
+        "xmemory": "cpp",
+        "xstddef": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp",
+        "xutility": "cpp"
     }
 }

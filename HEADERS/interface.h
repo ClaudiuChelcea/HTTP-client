@@ -23,6 +23,7 @@ class UI_printer {
         void put_message(std::string message);
         void put_error_message(std::string message);
         void get_input(std::string message, std::string& out_message);
+        void get_input(std::string message, int& id);
         void debug_printer(std::string message);
 };
 
