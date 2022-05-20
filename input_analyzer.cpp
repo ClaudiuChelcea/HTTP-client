@@ -7,6 +7,7 @@
 #define DEBUG_LOGIN false
 #define DEBUG_ENTER_LIBRARY false
 #define DEBUG_VIEW_ALL false
+#define DEBUG_ADD_BOOK false
 
 // Return an id for a command
 int get_command_id(std::string command)
@@ -47,7 +48,9 @@ void execute_command(int& command_id, int& exit_status, bool& userConnected, cha
     std::string server_answer;
     char* session_cookie = NULL, *last_session_cookie = NULL, *last_session_token = NULL, *session_token = NULL;
     char* parse_output = NULL;
-    int id;
+    int id = 0, page_count = 0;
+    std::string title, author, publisher, genre;
+    std::string data;
 
     switch(command_id) {
         case Constants::UNRECOGNIZED_COMMAND:
@@ -216,7 +219,17 @@ void execute_command(int& command_id, int& exit_status, bool& userConnected, cha
             } else {
                 // Print books in a JSON way
                 parse_output = strstr(const_cast<char*>(server_answer.c_str()), "[{\"");
+                if(!parse_output) {
+                    my_printer.put_error_message("No books!");
+                    my_printer.put_message("");
+                    goto leave;
+                }
                 for(int i = 0; i < (int) strlen(parse_output); ++i) {
+                    if(!parse_output[i]) {
+                        my_printer.put_error_message("No books!");
+                        my_printer.put_message("");
+                        break;
+                    }
                     if(parse_output[i] == '{') {
                         std::cout << '\t' << parse_output[i] << std::endl << '\t';
                     } else if(parse_output[i] == '}')  {
@@ -322,13 +335,185 @@ void execute_command(int& command_id, int& exit_status, bool& userConnected, cha
             close(sockfd);
             break;
         case Constants::ADD_BOOK_TO_LIBRARY:
+            if ((userConnected & jwt_Token_Access) != true) {
+                my_printer.put_message("You are not connected to the library / account!");
+                my_printer.put_message("");
+                break;
+            }
+
+            my_printer.get_input("Title:", title);
+            my_printer.get_input("Author:", author);
+            my_printer.get_input("Genre:", genre);
+            my_printer.get_input("Publisher:", publisher);
+            my_printer.get_input("Page count:", page_count);
+
+            // Create message
+            data.clear();
+            message.clear();
+            data.append("{\n\t\"title\": \"");
+            data.append(title);
+            data.append("\",\n");
+            data.append("\t\"author\":\"");
+            data.append(author);
+            data.append("\",\n\t\"genre\":\"");
+            data.append(genre);
+            data.append("\",\n\t\"publisher\":\"");
+            data.append(publisher);
+            data.append("\",\n\t\"page_count\":\"");
+            data.append(std::to_string(page_count));
+            data.append("\"\n}");
+
+            message.append(const_cast<char*>("POST /api/v1/tema/library/books HTTP/1.1"));
+            message.append(end);
+            message.append("Host: ");
+            message.append(HOST);
+            message.append(":");
+            message.append(std::to_string(PORT));
+            message.append(end);
+            message.append("Content-Type: application/json");
+            message.append(end);
+            message.append("Authorization: Bearer ");
+            message.append(jwt_Token);
+            message.append(end);
+            message.append("Cookie: ");
+            message.append(cookie);
+            message.append(end);
+            message.append("Content-Length: ");
+            message.append(std::to_string(data.length()));
+            message.append(end);
+            message.append(end);
+            message.append(data);
+            message.append(end);
+
+            // Open port
+            sockfd = open_connection(const_cast<char*>(HOST), PORT, AF_INET, SOCK_STREAM, 0);
+
+            #if DEBUG_ADD_BOOK == true
+                my_printer.debug_printer(message);
+            #endif
+
+            // Send message
+            send_to_server(sockfd, const_cast<char*>(message.c_str()));
+
+            // See what we receive from server
+            server_answer = receive_from_server(sockfd);
+           
+            server_retriever = strstr(const_cast<char*>(server_answer.c_str()), "error");
+
+            if(server_retriever != NULL) {
+                my_printer.put_message("Wrong data inserted!");
+                my_printer.put_message("");
+            } else {
+                my_printer.put_message("Book added successfully!");
+                my_printer.put_message("");
+            }
+
+            // Close everything
+            close(sockfd);
             break;
         case Constants::REMOVE_BOOK_FROM_LIBRARY:
+            if ((userConnected & jwt_Token_Access) != true) {
+                my_printer.put_message("You are not connected to the library / account!");
+                my_printer.put_message("");
+                break;
+            }
+
+            my_printer.get_input("Id:", id);
+
+            // Open port
+            message.clear();
+            sockfd = open_connection(const_cast<char*>(HOST), PORT, AF_INET, SOCK_STREAM, 0);
+
+            // Create message
+            message.append(const_cast<char*>("DELETE /api/v1/tema/library/books/"));
+            message.append(std::to_string(id));
+            message.append(" HTTP/1.1");
+            message.append(end);
+            message.append("Host: ");
+            message.append(HOST);
+            message.append(":");
+            message.append(std::to_string(PORT));
+            message.append(end);
+            message.append("Authorization: Bearer ");
+            message.append(jwt_Token);
+            message.append(end);
+            message.append("Cookie: ");
+            message.append(cookie);
+            message.append(end);
+            message.append(end);
+
+            // Send message
+            send_to_server(sockfd, const_cast<char*>(message.c_str()));
+
+            // See what we receive from server
+            server_answer = receive_from_server(sockfd);
+           
+            server_retriever = strstr(const_cast<char*>(server_answer.c_str()), "error");
+
+            if(server_retriever != NULL) {
+                my_printer.put_message("A book with this ID doesn't exist!");
+                my_printer.put_message("");
+            } else {
+                my_printer.put_message("The book with the specified ID was deleted!");
+                my_printer.put_message("");
+            }
+
+            // Close everything
+            close(sockfd);
             break;
         case Constants::LOGOUT:
+            if (userConnected != true) {
+                my_printer.put_message("You are not connected to the library / account!");
+                my_printer.put_message("");
+                break;
+            }
+
+            // Open port
+            message.clear();
+            sockfd = open_connection(const_cast<char*>(HOST), PORT, AF_INET, SOCK_STREAM, 0);
+
+            // Create message
+            message.append(const_cast<char*>("GET /api/v1/tema/auth/logout"));
+            message.append(" HTTP/1.1");
+            message.append(end);
+            message.append("Host: ");
+            message.append(HOST);
+            message.append(":");
+            message.append(std::to_string(PORT));
+            message.append(end);
+            message.append("Authorization: Bearer ");
+            message.append(jwt_Token);
+            message.append(end);
+            message.append("Cookie: ");
+            message.append(cookie);
+            message.append(end);
+            message.append(end);
+
+            // Send message
+            send_to_server(sockfd, const_cast<char*>(message.c_str()));
+
+            // See what we receive from server
+            server_answer = receive_from_server(sockfd);
+           
+            server_retriever = strstr(const_cast<char*>(server_answer.c_str()), "error");
+
+            if(server_retriever != NULL) {
+                my_printer.put_message("Error logging out!");
+                my_printer.put_message("");
+            } else {
+                my_printer.put_message("Successfull logout! See you soon!");
+                my_printer.put_message("");
+                jwt_Token_Access = false;
+                userConnected = false;
+            }
+
+            // Close everything
+            close(sockfd);
             break;
         case Constants::EXIT:
             exit_status = true;
+            jwt_Token_Access = false;
+            userConnected = false;
             break;
         default:
             error_message = "Case not found! Check your input! Command id: " + std::to_string(command_id) + "not recognized!";

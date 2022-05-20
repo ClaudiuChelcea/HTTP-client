@@ -24,11 +24,17 @@ File structure:
     - client.cpp (holds the client implementation, the main loop)
 
 Description:
+    The main file, the client.cpp, is a loop that receives the commands,
+    sets an ID to the commands and sends that ID to a switch loop that
+    executes the corresponding actions for each type of command inserted.
 
+    For writing and reading JSON, I created my own parser, just a for loop
+    that goes through the received string of form
+    {"key1":"value1","key2":"value2"} and prints it in the true JSON form.
 
-
-
-
+    The interface is made so that it looks beautiful to the user, being
+    implemented in the "interface.cpp" file, a singleton class used for all
+    the printing to the terminal and for getting all the input.
 
 Resources:
 [1.LAB 10 PCOM]: https://ocw.cs.pub.ro/courses/pc/laboratoare/10
